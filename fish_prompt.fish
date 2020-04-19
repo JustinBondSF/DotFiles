@@ -1,4 +1,4 @@
-# Defined in /tmp/fish.sG8oUu/fish_prompt.fish @ line 2
+# Defined in /home/bond/.config/fish/functions/fish_prompt.fish @ line 2
 function fish_prompt
     # This prompt shows:
     # - 0000ff lines if the last return command is OK, ff0000 otherwise
@@ -27,54 +27,57 @@ function fish_prompt
     set -q __fish_git_prompt_showupstream
     or set -g __fish_git_prompt_showupstream auto
 
+	set -U right_arrow_glyph \uE0B0
+
+	set -U left_arrow_glyph \uE0B2
+
     function _nim_prompt_wrapper
         set retc $argv[1]
         set field_name $argv[2]
         set field_value $argv[3]
-
-        set_color normal
-        set_color -o $retc
-        echo -n '─'
-        set_color -o $retc
-        echo -n '['
+	set optional $argv[4]	
+        
         set_color normal
         echo -n $field_name
         echo -n $field_value
-        set_color -o $retc
-        echo -n ']'
+
+ 
     end
 
     set_color -o $retc
-    echo -n '┬─'
-    set_color -o $retc
-    echo -n [
+    echo -n $Lfade
     if test "$USER" = root -o "$USER" = toor
-        set_color -o ff0000
+        set_color -o ff0000 -b $retc
     else
-        set_color -o $fish_color_command
+        set_color -o $fish_color_command -b $retc
     end
     echo -n $USER
-    set_color -o ffffff
+    set_color -o ffffff -b $retc
     echo -n @
     if [ -z "$SSH_CLIENT" ]
-        set_color -o $fish_color_param
+        set_color -o $fish_color_command -b $retc
     else
         set_color -o cyan
     end
     echo -n (prompt_hostname)
-    set_color -o ffffff
-    echo -n ':'
-    set_color -o $fish_color_command
+    set_color -o $retc -b 222222
+    echo -n $right_arrow_glyph
+    set_color -o $fish_color_command -b 222222
     echo -n (prompt_pwd)
-    set_color -o $retc
-    echo -n ']'
+    set_color -o 222222 -b 444444
+    echo -n $right_arrow_glyph
 
     # Date
-    _nim_prompt_wrapper $retc '⏳' (
-	set color -o $fish_color_command
-    	echo -n (date +%X)
-	)
+    #
+    set clock ( set_color -o ffffff -b 444444
+		echo -n '⏰' )	
+	
+    _nim_prompt_wrapper ''  $clock ( set_color -o ffffff -b 444444
+    					echo -n (date +%X) ) 
+				set_color 444444 -b 000000
+					echo -n $Rfade
 
+ 
     # Virtual Environment
     set -q VIRTUAL_ENV_DISABLE_PROMPT
     or set -g VIRTUAL_ENV_DISABLE_PROMPT true
@@ -97,15 +100,18 @@ function fish_prompt
     # Background jobs
     set_color normal
     for job in (jobs)
-        set_color $retc
+        set_color $retc -b $retc
         echo -n '│ '
         set_color brown
         echo $job
     end
     set_color normal
     set_color -o $retc
-    echo -n '╰─>'
-    set_color -o $fish_color_command
+    echo -n $Lfade
+    set_color -o ffffff -b $retc
     echo -n '🎼 '
+    set_color normal
+    set_color $retc 
+    echo -n $right_arrow_glyph
     set_color normal
 end
