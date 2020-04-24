@@ -15,16 +15,18 @@ set prev_cmd_duration	(set -l limit 5000
    	            if test $CMD_DURATION 
     		      set duration (echo "$CMD_DURATION 1000" | awk '{printf "%.1fs", $1 / $2}')
 
-        	       test $limit -lt $CMD_DURATION
-end
+        	       test $limit -lt $CMD_DURATION; and echo -n $duration
+
+                    end
 				  )
+                  
 # and now the actual prompt to be displayed
     
      
      set_color -o $retc
      echo -n $Lfade
      set_color ffffff -b $retc	
-     echo -n ' ♪ ♫ ♬'
+     echo -n ' ♪ ♫ ♬ '
      echo -n $prev_cmd_duration
      echo -n ' ♫ ♬ ♪ '
      set_color normal

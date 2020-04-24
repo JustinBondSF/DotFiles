@@ -1,13 +1,13 @@
 # Defined in /home/bond/.config/fish/functions/fish_prompt.fish @ line 2
 function fish_prompt
-    set -U Rseperator \ue0c4
-    set -U Lseperator \uE0CA
+
+#create glyph references, color the output based on [ret]urn [c]ode aka prev cmd success or fail
+    set -U Rseparator \uE0C8
+    set -U Lseparator \uE0CA
     set -U Rfade ▓▒░
     set -U Lfade ░▒▓       
-    set -U right_arrow_glyph \ue0c4
-    set -U left_arrow_glyph \uE0B2
-
-
+    set -U right_arrow_glyph \uE0C8
+    set -U left_arrow_glyph \uE0CA
     set retc ff0000
         test $status = 0; and set retc 0000ff
 
@@ -23,42 +23,39 @@ function fish_prompt
         test $optional; and $optional	
         echo -n $field_name
         echo -n $field_value
+        end
 
- 
-    end
-
-
-
+#VI mode dynamic prompt segment
         switch $fish_bind_mode
             case default
                 set_color --bold --background green ffffff
                 echo -n '[N] '
                 set_color --bold --background $retc green
-                echo -n $Rseperator
+                echo -n $Rseparator
             case insert
                 set_color --bold --background 8b00b5 ffffff
                 echo -n '[I] '
                 set_color --bold --background $retc 8b00b5
-                echo -n $Rseperator
+                echo -n $Rseparator
             case replace_one
                 set_color --bold --background cyan ffffff
                 echo -n '[R] '
                 set_color --bold --background $retc cyan
-                echo -n $Rseperator
+                echo -n $Rseparator
             case replace
                 set_color --bold --background ffa500 ffffff
                 echo -n '[R] '
                 set_color --bold --background $retc ffa500
-                echo -n $Rseperator
+                echo -n $Rseparator
             case visual
                 set_color --bold --background  magenta ffffff
                 echo -n '[V] '
                 set_color --bold --background $retc magenta
-                echo -n $Rseperator
+                echo -n $Rseparator
         end
-        set_color normal
 
-    set_color -o $retc
+#Display red username if root, or use the color of commands if not
+    # and color the background according to previous command success or #   fail
  
     if test "$USER" = root -o "$USER" = toor
         set_color -o ff0000 -b $retc
@@ -66,8 +63,14 @@ function fish_prompt
         set_color -o $fish_color_command -b $retc
     end
     echo -n $USER
+
+
     set_color -o ffffff -b $retc
     echo -n @
+
+
+#Display host name, cyan if ssh, command color if not, color background 
+# according to previous command
     if [ -z "$SSH_CLIENT" ]
         set_color -o $fish_color_command -b $retc
     else
@@ -76,6 +79,8 @@ function fish_prompt
     echo -n (prompt_hostname)
     set_color -o $retc -b 222222
     echo -n $right_arrow_glyph
+    
+#Current directory segment
     set_color -o $fish_color_command -b 222222
     echo -n ' '(prompt_pwd)' '
     set_color -o 222222 -b 444444
@@ -104,11 +109,11 @@ function fish_prompt
 
     # git
 
-    set prompt_git (fish_git_prompt | string trim -c ' ()')
-    test -n "$prompt_git"
-    and _nim_prompt_wrapper $retc G $prompt_git
+    #set prompt_git (fish_git_prompt | string trim -c ' ()')
+    #test -n "$prompt_git"
+    #and _nim_prompt_wrapper $retc G $prompt_git
 
-    # Battery status
+    # Battery percentage displayed in red, yellow, and green glyphs 
 
     set battery_glyph (
         set -U battery_percent (
@@ -148,34 +153,32 @@ function fish_prompt
             echo -n \uf579   
         end
 )
-    
-    type -q acpi
-    and test (acpi -a 2> /dev/null | string match -r off);
-      and echo -n ' '$battery_glyph
-    set_color -b 222222
     echo -n ' '$battery_glyph' '
     set_color -o 222222 -b 000000
-    echo -n $Rseperator
+    echo -n $Rseparator
 
 
     # New line
     echo
 
     # Background jobs
-    set_color normal
-    for job in (jobs)
-        set_color $retc -b $retc
-        echo -n '│ '
-        set_color brown
-        echo $job
-    end
+    #set_color normal
+    #for job in (jobs)
+     #   set_color $retc -b $retc
+      #  echo -n '│ '
+       # set_color brown
+        #echo $job
+    #end
 
 
+#2nd line prompt, colored by previous command success/fail
+    #command line = composing music!
+        #continued in right prompt
     set_color normal
     set_color -o $retc
     echo -n $Lfade
     set_color -o ffffff -b $retc
-    echo -n '🎼 '
+    echo -n ' 🎼 '
     set_color normal
     set_color $retc 
     echo -n $right_arrow_glyph
