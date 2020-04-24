@@ -2,11 +2,8 @@
 function fish_greeting --description What\'s\ up,\ fish\?
 fish_logo  | lolcat
 
-fortune |lolcat
+fortune | lolcat
 	
-
-    # TODO: `command -q -s` only works on fish 2.5+, so hold off on that for now
-    command -s uptime >/dev/null
 
 
     set_color normal

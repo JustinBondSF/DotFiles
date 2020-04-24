@@ -1,51 +1,65 @@
 # Defined in /home/bond/.config/fish/functions/fish_prompt.fish @ line 2
 function fish_prompt
-    # This prompt shows:
-    # - 0000ff lines if the last return command is OK, ff0000 otherwise
-    # - your user name, in ff0000 if root or yellow otherwise
-    # - your hostname, in cyan if ssh or blue otherwise
-    # - the current path (with prompt_pwd)
-    # - date +%X
-    # - the current virtual environment, if any
-    # - the current git status, if any, with fish_git_prompt
-    # - the current battery state, if any, and if your power cable is unplugged, and if you have "acpi"
-    # - current background jobs, if any
+    set -U Rseperator \ue0c4
+    set -U Lseperator \uE0CA
+    set -U Rfade ▓▒░
+    set -U Lfade ░▒▓       
+    set -U right_arrow_glyph \ue0c4
+    set -U left_arrow_glyph \uE0B2
 
-    # It goes from:
-    # ┬─[nim@Hattori:~]─[11:39:00]
-    # ╰─>$ echo here
 
-    # To:
-    # ┬─[nim@Hattori:~/w/dashboard]─[11:37:14]─[V:django20]─[G:master↑1|●1✚1…1]─[B:85%, 05:41:42 remaining]
-    # │ 2	15054	0%	arrêtée	sleep 100000
-    # │ 1	15048	0%	arrêtée	sleep 100000
-    # ╰─>$ echo there
-
-    set -l retc ff0000
-    test $status = 0; and set retc 0000ff
+    set retc ff0000
+        test $status = 0; and set retc 0000ff
 
     set -q __fish_git_prompt_showupstream
     or set -g __fish_git_prompt_showupstream auto
 
-	set -U right_arrow_glyph \uE0B0
-
-	set -U left_arrow_glyph \uE0B2
 
     function _nim_prompt_wrapper
         set retc $argv[1]
         set field_name $argv[2]
         set field_value $argv[3]
-	set optional $argv[4]	
-        
-        set_color normal
+	    set optional $argv[4]
+        test $optional; and $optional	
         echo -n $field_name
         echo -n $field_value
 
  
     end
 
+
+
+        switch $fish_bind_mode
+            case default
+                set_color --bold --background green ffffff
+                echo -n '[N] '
+                set_color --bold --background $retc green
+                echo -n $Rseperator
+            case insert
+                set_color --bold --background 8b00b5 ffffff
+                echo -n '[I] '
+                set_color --bold --background $retc 8b00b5
+                echo -n $Rseperator
+            case replace_one
+                set_color --bold --background cyan ffffff
+                echo -n '[R] '
+                set_color --bold --background $retc cyan
+                echo -n $Rseperator
+            case replace
+                set_color --bold --background ffa500 ffffff
+                echo -n '[R] '
+                set_color --bold --background $retc ffa500
+                echo -n $Rseperator
+            case visual
+                set_color --bold --background  magenta ffffff
+                echo -n '[V] '
+                set_color --bold --background $retc magenta
+                echo -n $Rseperator
+        end
+        set_color normal
+
     set_color -o $retc
-    echo -n $Lfade
+ 
     if test "$USER" = root -o "$USER" = toor
         set_color -o ff0000 -b $retc
     else
@@ -63,36 +77,86 @@ function fish_prompt
     set_color -o $retc -b 222222
     echo -n $right_arrow_glyph
     set_color -o $fish_color_command -b 222222
-    echo -n (prompt_pwd)
+    echo -n ' '(prompt_pwd)' '
     set_color -o 222222 -b 444444
     echo -n $right_arrow_glyph
 
     # Date
-    #
+    
     set clock ( set_color -o ffffff -b 444444
-		echo -n '⏰' )	
-	
-    _nim_prompt_wrapper ''  $clock ( set_color -o ffffff -b 444444
-    					echo -n (date +%X) ) 
-				set_color 444444 -b 000000
-					echo -n $Rfade
+		                echo -n '⏰' )	
+
+	set _date ( set_color -o ffffff -b 444444
+                        echo -n (date +%X) ) 
+               
+     echo -n $clock 
+     echo -n $_date
+     set_color 444444 -b 222222
+     echo -n $right_arrow_glyph
 
  
     # Virtual Environment
-    set -q VIRTUAL_ENV_DISABLE_PROMPT
-    or set -g VIRTUAL_ENV_DISABLE_PROMPT true
-    set -q VIRTUAL_ENV
-    and _nim_prompt_wrapper $retc V (basename "$VIRTUAL_ENV")
+    #set -q VIRTUAL_ENV_DISABLE_PROMPT
+    #or set -g VIRTUAL_ENV_DISABLE_PROMPT true
+    #set -q VIRTUAL_ENV
+    #and _nim_prompt_wrapper $retc V (basename "$VIRTUAL_ENV")
+
 
     # git
+
     set prompt_git (fish_git_prompt | string trim -c ' ()')
     test -n "$prompt_git"
     and _nim_prompt_wrapper $retc G $prompt_git
 
     # Battery status
+
+    set battery_glyph (
+        set -U battery_percent (
+            acpi -b | string match -r '..%' | string replace \% '' | string trim
+                                )
+    
+    switch $battery_percent 
+        case '9*'
+            set_color -o green -b 222222
+            echo -n \uf583
+        case '8*'
+            set_color -o green -b 222222
+            echo -n \uf581
+        case '7*'
+            set_color -o green -b 222222
+            echo -n \uf580
+        case '6*'
+            set_color -o yellow -b 222222
+            echo -n \uf57f
+        case '5*'
+            set_color -o yellow -b 222222
+            echo -n \uf57e
+        case '4*'
+            set_color -o yellow -b 222222
+            echo -n \uf57d
+        case '3*'
+            set_color -o red -b 222222
+            echo -n \uf57c
+        case '2*'
+            set_color -o red -b 222222
+            echo -n \uf57b
+        case '1*'
+            set_color -o red -b 222222
+            echo -n \uf57a
+        case '^*\$'
+            set_color -o red -b 222222
+            echo -n \uf579   
+        end
+)
+    
     type -q acpi
-    and test (acpi -a 2> /dev/null | string match -r off)
-    and _nim_prompt_wrapper $retc '⚡' (battery)
+    and test (acpi -a 2> /dev/null | string match -r off);
+      and echo -n ' '$battery_glyph
+    set_color -b 222222
+    echo -n ' '$battery_glyph' '
+    set_color -o 222222 -b 000000
+    echo -n $Rseperator
+
 
     # New line
     echo
@@ -105,6 +169,8 @@ function fish_prompt
         set_color brown
         echo $job
     end
+
+
     set_color normal
     set_color -o $retc
     echo -n $Lfade
