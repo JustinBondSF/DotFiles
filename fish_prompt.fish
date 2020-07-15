@@ -102,66 +102,67 @@ function fish_prompt
 
     # git
 
-    #set prompt_git (fish_git_prompt | string trim -c ' ()')
-    #test -n "$prompt_git"
-    #and _nim_prompt_wrapper $retc G $prompt_git
+    set prompt_git (fish_git_prompt | string trim -c ' ()')
+    test -n "$prompt_git"
+    and set_color -b $retc
+    echo -n  + ' ' + $prompt_git
 
     # Battery percentage displayed in red, yellow, and green glyphs 
 
-    #     set battery_glyph (
-    #         set -U battery_percent (
-    #             battery 
-    #                                 )
+    set battery_glyph (
+            set -U battery_percent (
+                battery 
+                                    )
 
-    #     switch $battery_percent 
-    #         case '9*'
-    #             set_color -o green -b 222222
-    #             echo -n \uf583
-    #         case '8*'
-    #             set_color -o green -b 222222
-    #             echo -n \uf581
-    #         case '7*'
-    #             set_color -o green -b 222222
-    #             echo -n \uf580
-    #         case '6*'
-    #             set_color -o yellow -b 222222
-    #             echo -n \uf57f
-    #         case '5*'
-    #             set_color -o yellow -b 222222
-    #             echo -n \uf57e
-    #         case '4*'
-    #             set_color -o yellow -b 222222
-    #             echo -n \uf57d
-    #         case '3*'
-    #             set_color -o red -b 222222
-    #             echo -n \uf57c
-    #         case '2*'
-    #             set_color -o red -b 222222
-    #             echo -n \uf57b
-    #         case '1*'
-    #             set_color -o red -b 222222
-    #             echo -n \uf57a
-    #         case '^*\$'
-    #             set_color -o red -b 222222
-    #             echo -n \uf579   
-    #         end
-    # )
-    #     echo -n ' '$battery_glyph' '
-    #     set_color -o 222222 -b 000000
-    #     echo -n $Rseparator
+        switch $battery_percent 
+            case '9*'
+                set_color -o green -b 222222
+                echo -n \uf583
+            case '8*'
+                set_color -o green -b 222222
+                echo -n \uf581
+            case '7*'
+                set_color -o green -b 222222
+                echo -n \uf580
+            case '6*'
+                set_color -o yellow -b 222222
+                echo -n \uf57f
+            case '5*'
+                set_color -o yellow -b 222222
+                echo -n \uf57e
+            case '4*'
+                set_color -o yellow -b 222222
+                echo -n \uf57d
+            case '3*'
+                set_color -o red -b 222222
+                echo -n \uf57c
+            case '2*'
+                set_color -o red -b 222222
+                echo -n \uf57b
+            case '1*'
+                set_color -o red -b 222222
+                echo -n \uf57a
+            case '^*\$'
+                set_color -o red -b 222222
+                echo -n \uf579   
+            end
+    )
+    echo -n ' '$battery_glyph' '
+    set_color -o 222222 -b 000000
+    echo -n $Rseparator
 
 
     # New line
     echo
 
-    # Background jobs
-    #set_color normal
-    #for job in (jobs)
-    #   set_color $retc -b $retc
-    #  echo -n '│ '
-    # set_color brown
-    #echo $job
-    #end
+    #  Background jobs
+    set_color normal
+    for job in (jobs)
+        set_color $retc -b $retc
+        echo -n '│ '
+        set_color brown
+        echo $job
+    end
 
 
     #2nd line prompt, colored by previous command success/fail
